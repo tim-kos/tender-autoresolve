@@ -7,7 +7,8 @@ config.state = "open"
 config.staffEmails = [
   "tim.koschuetzki@transloadit.com",
   "kevin@transloadit.com",
-  "marius@transloadit.com"
+  "marius@transloadit.com",
+  "joe@transloadit.com"
 ]
 
 # number of days that need to pass for a ticket to be closed
