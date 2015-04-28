@@ -15,7 +15,11 @@ or
 
 # Execution
 
-Supply your credentials through environment variables. Just copy **env.default.sh** into an **env.sh** file, fill out all the credentials there and then run:
+1. Supply your credentials through environment variables. Just copy **env.default.sh** into an **env.sh** file, fill out all the credentials there.
+
+2. Adjust your config settings in lib/config.js.
+
+3. Run:
 
 ```
 source env.sh && ./bin/tender_autoresolve
