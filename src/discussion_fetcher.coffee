@@ -19,7 +19,6 @@ class DiscussionFetcher
 
   _buildUrl: ->
     url = "http://api.tenderapp.com/#{@site}/discussions/#{@state}"
-    url += "?auth=#{@apiKey}"
     return url
 
   _validates: ->
@@ -35,20 +34,15 @@ class DiscussionFetcher
       return cb err
 
     @_fetchPage 1, =>
-      # Unfortunately, Tender API's page parameter is broken right now
-      # @_end cb
+      if @pageCount < 2
+        return @_end cb
 
-      # if @pageCount < 2
-      #   return @_end cb
-
-      q = async.queue @_fetchPage.bind(this), 1
+      q = async.queue @_fetchPage.bind(this), 5
       q.drain = =>
         return @_end cb
 
-      q.push 2
-
-      # for num in [2..@pageCount]
-      #   q.push num
+      for num in [2..@pageCount]
+        q.push num
 
   _end: (cb) ->
     @discussions = _.unique @discussions
@@ -58,10 +52,15 @@ class DiscussionFetcher
     if @err
       return cb()
 
-    # url = "#{@url}&page=#{page}&sort=created&order=asc"
-    url = "#{@url}&page=#{page}"
-    console.log url
-    cmd = "curl -H \"Accept: application/vnd.tender-v1+json\" #{url}"
+    console.log "Handling page #{page}"
+
+    cmd = ["curl"]
+    cmd.push "-H \"Accept: application/vnd.tender-v1+json\""
+    cmd.push "-H \"X-Tender-Auth: #{@apiKey}\""
+    cmd.push "-H \"Content-Type: application/json\""
+
+    cmd = cmd.join " "
+    cmd += " #{@url}?page=#{page}"
 
     childProcess.exec cmd, (err, stdout, stderr) =>
       @_offset += @_perPage
@@ -81,7 +80,7 @@ class DiscussionFetcher
         entry =
           title             : d.title
           href              : d.html_href
-          resolve_href      : d.resolve_href
+          comments_href     : d.comments_href
           last_author_email : d.last_author_email
           last_updated_at   : d.last_updated_at
 

@@ -1,5 +1,6 @@
 request           = require "request"
 config            = require "./config"
+async             = require "async"
 DiscussionFetcher = require "./discussion_fetcher"
 
 class DiscussionResolver
@@ -17,13 +18,8 @@ class DiscussionResolver
       if err
         throw err
 
-      console.log ">> do filter"
       discussions = @_filter discussions
-
-      if discussions.length > 0
-        console.log discussions
-
-        @_resolve discussions, cb
+      @_resolveDiscussions discussions, cb
 
   _filter: (discussions) ->
     result = []
@@ -35,15 +31,48 @@ class DiscussionResolver
         continue
 
       timeThen = +new Date(d.last_updated_at) / 1000
-      # console.log d.last_updated_at, timeThen, now
-      console.log d.last_updated_at
 
       if now - timeThen < 86400 * config.numDays
         continue
 
-  _resolve: (discussions, cb) ->
-    msg = "Found #{discussions.length} discussions:\n"
+      result.push d
 
-    cb null
+    return result
+
+  _resolveDiscussions: (discussions, cb) ->
+    if discussions.length == 0
+      return cb()
+
+    q = async.queue @_resolve.bind(this), 1
+    q.drain = cb
+
+    index = 1
+    for d in discussions
+      obj =
+        index      : index++
+        total      : discussions.length
+        discussion : d
+      q.push obj
+
+  _resolve: (obj, cb) ->
+    discussion = obj.discussion
+    index      = obj.index
+    total      = obj.total
+
+    url = discussion.comments_href.replace /\{\?page\}/, ""
+    opts =
+      url     : url
+      form    : config.formData
+      headers :
+        "X-Tender-Auth" : config.tender.apiKey
+        "Accept"        : "application/vnd.tender-v1+json"
+        "Content-Type"  : "application/json"
+
+    request.post opts, (err, resp, body) ->
+      if err
+        throw err
+
+      console.log "#{index} / #{total}: Resolved #{discussion.href}"
+      cb()
 
 module.exports = DiscussionResolver
