@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 
 var coffee             = require('coffee-script/register');
-var DiscussionReporter = require('../lib/discussion_reporter');
+var DiscussionResolver = require('../lib/discussion_resolver');
 
-var reporter = new DiscussionReporter();
-reporter.report();
+var resolver = new DiscussionResolver();
+resolver.start(function(err) {
+  if (err) {
+    throw err;
+  }
+
+  console.log('All done!');
+});

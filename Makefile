@@ -4,6 +4,9 @@ COFFEELINT = node_modules/.bin/coffeelint
 MOCHA      = node_modules/.bin/mocha --compilers coffee:coffee-script --require "coffee-script/register"
 REPORTER   = nyan
 
+start: build
+	source env.sh && ./bin/tender_autoresolve
+
 test: build
 	@make lint || true
 	$(MOCHA) --reporter $(REPORTER)
