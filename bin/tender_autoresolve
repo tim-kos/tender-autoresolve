@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+var coffee             = require('coffee-script/register');
+var DiscussionReporter = require('../lib/discussion_reporter');
+
+var reporter = new DiscussionReporter();
+reporter.report();

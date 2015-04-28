@@ -1,0 +1,38 @@
+{
+  "author": {
+    "name": "Tim Koschützki",
+    "email": "tim@transloadit.com",
+    "url": "http://transloadit.com/"
+  },
+  "name": "tender-autoresolve",
+  "description": "A wrapper around ENTP's Tender, providing a an auto resolve feature for old tickets.",
+  "homepage": "https://github.com/tim-kos/tender-autoresolve",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tim-kos/tender-autoresolve"
+  },
+  "version": "0.0.0",
+  "main": "./bin/tender_autoresolve",
+  "bin": {
+    "tender_autoresolve": "./bin/tender_autoresolve"
+  },
+  "dependencies": {
+    "async": "0.2.9",
+    "commander": "2.2.0",
+    "underscore": "1.6.0",
+    "request": "2.34.0"
+  },
+  "devDependencies": {
+    "coffee-script": "1.7.1",
+    "chai": "1.9.1",
+    "coffeelint": "1.3.0",
+    "mocha": "1.18.2",
+    "request": "2.34.0"
+  },
+  "engines": {
+    "node": ">= 0.8"
+  },
+  "bugs": {
+    "url": "https://github.com/tim-kos/tender_autoresolve/issues"
+  }
+}
